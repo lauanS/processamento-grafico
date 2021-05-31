@@ -1,10 +1,5 @@
 import numpy as np
-
 from OpenGL.GL import *
-import pygame
-from OpenGL.GL import *
-from OpenGL.GLU import *
-import math
 
 class ObjLoader:
     def __init__(self):
@@ -64,63 +59,12 @@ class ObjLoader:
         print("Faces:")
         print(self.faces)
 
-class objItem:
-
-    def __init__(self, object):
-        self.angle = 0
-        self.vertices = []
-        self.faces = []
-        self.coordinates = [0, 0, -65]  # [x,y,z]
-        self.teddy = object
-        self.position = [0, 0, -50]
-
-
-    def render_scene(self):
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        glClearColor(0.902, 0.902, 1, 0.0)
-        glMatrixMode(GL_MODELVIEW)
-        glLoadIdentity()
-        gluLookAt(0, 0, 0, math.sin(math.radians(self.angle)), 0, math.cos(math.radians(self.angle)) * -1, 0, 1, 0)
-        glTranslatef(self.coordinates[0], self.coordinates[1], self.coordinates[2])
-
 def main():
     obj = ObjLoader()
     file_name = 'src/modelos3D/small.obj'
     obj.load_3D_obj(file_name)
     obj.print()
     obj.render_scene()
-
-def main_guide():
-    pygame.init()
-    pygame.display.set_mode((640, 480), pygame.DOUBLEBUF | pygame.OPENGL)
-    pygame.display.set_caption("Ursinho super bonitinho")
-    clock = pygame.time.Clock()
-    # Feature checker
-    glDisable(GL_TEXTURE_2D)
-    glEnable(GL_DEPTH_TEST)
-    glEnable(GL_BLEND)
-    glEnable(GL_CULL_FACE)
-    #
-    glMatrixMode(GL_PROJECTION)
-    gluPerspective(45.0, float(800) / 600, .1, 1000.)
-    glMatrixMode(GL_MODELVIEW)
-    glLoadIdentity()
-
-    ursinho = ObjLoader()
-    ursinho.load_3D_obj('src/modelos3D/ursinho.obj')
-    objectTeddy = objItem(ursinho)
-
-    done = False
-    while not done:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                done = True
-        objectTeddy.render_scene()
-        objectTeddy.teddy.render_scene()
-        pygame.display.flip()
-        clock.tick(30)
-    pygame.quit()
     
 if __name__ == '__main__':
-    main_guide()
+    main()
