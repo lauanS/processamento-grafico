@@ -7,17 +7,28 @@ from ObjLoader import ObjLoader
 class Scene:
     def __init__(self):
         self.vertices = np.array([])
-        self.faces = np.array([])
         self.obj_list = []
 
         # matrizes de transformações #
         self.scale = np.array([1, 1, 1])
 
-    def matrix_scale(self):
+    def scaling_matrix(self):
         return np.array([[self.scale[0], 0, 0, 0],
                          [0, self.scale[1], 0, 0],
                          [0, 0, self.scale[2], 0],
                          [0, 0, 0, 1]])
+
+    def rotation_matrix(self):
+        pass
+
+    def translation_matrix(self):
+        pass
+
+    def shear_matrix(self):
+        pass
+    
+    def model_matri(self):
+        pass
 
     def set_scale(self, scale):
         self.scale = np.array(scale)
@@ -26,7 +37,7 @@ class Scene:
         if(scale == None):
             scale = self.scale
         
-        matrix = self.matrix_scale()
+        matrix = self.scaling_matrix()
         # Percorre todos os objetos da cena
         for obj in self.obj_list:
             # Obtem os vertices do obje
