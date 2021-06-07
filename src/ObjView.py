@@ -52,7 +52,7 @@ class ObjView:
 
 if __name__ == '__main__':
     obj = ObjLoader()
-    file_name = 'src/modelos3D/cube.obj'
+    file_name = 'src/modelos3D/ursinho.obj'
     obj.load_3D_obj(file_name)
     view = ObjView(obj)
     view.render()

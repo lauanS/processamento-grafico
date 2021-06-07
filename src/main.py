@@ -3,7 +3,7 @@ from ObjView import ObjView
 from Scene import Scene
 
 def main():
-    zoom = 1
+    zoom = 0.5
     # Carregando um objeto
     obj = ObjLoader()
     file_name = 'src/modelos3D/ursinho.obj'

@@ -27,7 +27,7 @@ class Scene:
     def shear_matrix(self):
         pass
     
-    def model_matri(self):
+    def model_matrix(self):
         pass
 
     def set_scale(self, scale):
@@ -66,10 +66,14 @@ def main():
     obj = ObjLoader()
     file_name = 'src/modelos3D/small.obj'
     obj.load_3D_obj(file_name)
+    # Cria a cena
     scene = Scene()
 
     scene.add_obj(obj)
-    scene.set_scale([2, 2, 2])
+
+    # Aplica transformações
+    scene.set_scale([0.5, 0.5, 0.5])
+
     print(scene.apply_scale())
 
 
