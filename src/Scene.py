@@ -40,7 +40,7 @@ class Scene:
         matrix = self.scaling_matrix()
         # Percorre todos os objetos da cena
         for obj in self.obj_list:
-            # Obtem os vertices do obje
+            # Obtem os vertices do objeto
             vertices = obj.vertices
             # Adiciona 1 ao final de cada linha
             rows = vertices.shape[0]
