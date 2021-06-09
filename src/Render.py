@@ -9,18 +9,22 @@ from Camera import Camera
 class Render:
     def __init__(self, object = {}):
         self.object = object
-        self.image = np.zeros((100, 100))
+        self.image = np.zeros((600, 600))
 
     def render(self):
         vertices = self.object.vertices
-        for i in range(len(faces)):
+        for i in range(len(vertices)):
             startpoint = vertices[i]
-            endpoint = vertices[i + 1]
-            self.draw_line(startpoint[0], startpoint[1], endpoint[0], endpoint[1])
+            self.draw_pixel(startpoint[0], startpoint[1])
         
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
 
+    def draw_triangle(self, point_a, point_b, point_c):
+        self.draw_line(point_a[0], point_a[1], point_b[0], point_b[1])
+        self.draw_line(point_b[0], point_b[1], point_c[0], point_c[1])
+        self.draw_line(point_c[0], point_c[1], point_a[0], point_a[1])
+    
     # Desenha uma linha na imagem
     def draw_line(self, x0, y0, x1, y1):
         dx = x1 - x0
@@ -51,8 +55,8 @@ class Render:
 
     # Pinta um pixel na imagem
     def draw_pixel(self, x, y):
-        print(f'X: {x}[{int(x)}]|Y: {y}[{int(y)}]')
-        self.image[49 - int(x)][49 - int(y)] = 1
+        # print(f'X: {x}[{int(x)}]|Y: {y}[{int(y)}]')
+        self.image[299 - int(x)][299 - int(y)] = 1
         
 
 
@@ -60,7 +64,7 @@ class Render:
 def main():
     # -----------------------Carregando um objeto ----------------------- #
     obj = ObjLoader()
-    file_name = 'src/modelos3D/ursinho.obj'
+    file_name = 'src/modelos3D/coarseTri.hand.obj'
     obj.load_3D_obj(file_name)
 
     # -----------------------Criando uma cena----------------------- #
