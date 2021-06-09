@@ -36,10 +36,12 @@ Instale os pacotes necessários para execução do programa:
 # Utilizando o pip
 # Numpy
 pip install numpy==1.20.2
+pip install matplotlib==3.4.2
 
 # Utilizando o conda
 # Numpy
 conda install numpy=1.20.2
+conda install -c conda-forge matplotlib=3.4.2
 ```
 
 Versões usadas durante desenvolvimento:
@@ -49,6 +51,7 @@ Python | 3.9.5
 pip | 21.1.1
 Conda | 4.10.1
 NumPy | 1.20.2
+Matplotlib | 3.4.2
 
 ## Instalação para o desenvolvimento
 
