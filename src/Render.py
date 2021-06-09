@@ -1,4 +1,5 @@
 import numpy as np
+# Biblioteca para renderizar a imagem
 from matplotlib import pyplot as plt
 
 from ObjLoader import ObjLoader
@@ -8,18 +9,24 @@ from Camera import Camera
 
 class Render:
     def __init__(self, object = {}):
+        # Objeto que será renderizado
         self.object = object
+        # Matriz da imagem (600 por 600 para a mão)
+        # Use 100x100 para o ursinho
         self.image = np.zeros((600, 600))
 
     def render(self):
+        # Obtem as vertices do objeto (pontos)
         vertices = self.object.vertices
+        # Para cada ponto, desenha ele na matrix, usando seu x e y
         for i in range(len(vertices)):
             startpoint = vertices[i]
             self.draw_pixel(startpoint[0], startpoint[1])
-        
+        # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
 
+    # Função para desenhar um triângulo
     def draw_triangle(self, point_a, point_b, point_c):
         self.draw_line(point_a[0], point_a[1], point_b[0], point_b[1])
         self.draw_line(point_b[0], point_b[1], point_c[0], point_c[1])
