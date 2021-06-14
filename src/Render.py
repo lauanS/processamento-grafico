@@ -27,7 +27,6 @@ class Render:
             point_b = vertices[int(faces[i][1]) - 1]
             point_c = vertices[int(faces[i][2]) - 1]
             self.draw_triangle(point_a, point_b, point_c)
-            self.draw_triangle(-point_a, -point_b, -point_c)
         # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
@@ -38,33 +37,52 @@ class Render:
         self.draw_line(point_b[0], point_b[1], point_c[0], point_c[1])
         self.draw_line(point_c[0], point_c[1], point_a[0], point_a[1])
 
+    def signal(self, value):
+        if(value < 0):
+            return -1
+        return 1
+
     # Desenha uma linha na imagem
     def draw_line(self, x0, y0, x1, y1):
-        dx = x1 - x0
-        dy = y1 - y0
+        dx = abs(x1 - x0)
+        dy = abs(y1 - y0)
+
+        signal_x = self.signal(x1 - x0)
+        signal_y = self.signal(y1 - y0)
+        
+        x = x0
+        y = y0
+        if(signal_x < 0):
+            x -= 1
+        if(signal_y < 0):
+            y -= 1
+
+        # trocar deltax com deltay dependendo da inclinacao da reta 
+        interchange = False
+        if ( dy > dx):
+            tmp = dx
+            dx = dy
+            dy = tmp
+            interchange = True
 
         # Valor inicial de d
         d = 2 * dy - dx
-        # Incremento de E
-        incE = 2 * dy
-        # Incremento de NE
-        incNe = 2 * (dy - dx)
 
-        x = x0
-        y = y0
-        self.draw_pixel(x, y)
-
-        while(x < x1):
-            # Escolhe E
-            if(d <= 0):
-                d = d + incE
-                x = x + 1
-            # Escolhe NE
-            else:
-                d = d + incNe
-                x = x + 1
-                y = y + 1
+        for i in range(int(dx)):
             self.draw_pixel(x, y)
+            while(d >= 0):
+                if(interchange):
+                    x = x + signal_x;
+                else:
+                    y = y + signal_y;
+                d = d - 2 * dx
+            
+            if(interchange):
+                y = y + signal_y
+            else:
+                x = x + signal_x
+            
+            d = d + 2 * dy
 
     # Pinta um pixel na imagem
     def draw_pixel(self, x, y):
