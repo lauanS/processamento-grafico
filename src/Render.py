@@ -14,7 +14,7 @@ class Render:
         self.object = object
         # Matriz da imagem (600 por 600 para a mão)
         # Use 100x100 para o ursinho
-        self.image = np.zeros((100, 100))
+        self.image = np.zeros((1200, 1200))
 
     def render(self):
         # Obtem as vertices do objeto (pontos)
@@ -27,6 +27,17 @@ class Render:
             point_b = vertices[int(faces[i][1]) - 1]
             point_c = vertices[int(faces[i][2]) - 1]
             self.draw_triangle(point_a, point_b, point_c)
+        # Plota a matrix como uma imagem
+        plt.imshow(self.image, interpolation='nearest')
+        plt.show()
+    
+    def render_pixels(self):
+        # Obtem as vertices do objeto (pontos)
+        vertices = self.object.vertices
+
+        # Para cada ponto, desenha ele na matrix, usando seu x e y
+        for i in range(len(vertices)):
+            self.draw_pixel(vertices[i][0], vertices[i][1])
         # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
@@ -100,17 +111,25 @@ def main():
     obj.load_3D_obj(file_name)
 
     # -----------------------Criando uma cena----------------------- #
-    zoom = 0.8
+    zoom = 6
     scene = Scene()
     scene.add_obj(obj)
     scene.set_scale([zoom, zoom, zoom])
+    scene.set_translation([10, 1, 1])
+    scene.set_rotation(0, 'z')
+    obj.vertices = scene.apply_rotation()
+    scene.obj_list[0] = obj
     obj.vertices = scene.apply_scale()
+    scene.obj_list[0] = obj
+    obj.vertices = scene.apply_translation()
+    
     # ----------------------- Camera ----------------------- #
     # Criando uma câmera apontada para o objeto passado como parâmetro
     cam = Camera(obj)
     # Definindo posição da câmera, ponto a ser visualizado e o vetor de orientação respectivamente
-    cam.set_cam_info([5, 4, 3], [1.0, 1.0, 1.0], [1, 1, 1])
-    cam.set_perspective_info(2, 2, -4, -8.5)
+    # Position - lookAt - viewUp
+    cam.set_cam_info([5, 5, 3], [-500.0, 1000.0, -5.0], [1, 1, 1])
+    cam.set_perspective_info(2, 2, -4, -8.5) # Limites do frustum
     cam.transform_visualization()
     obj.vertices = cam.change_perspective()
     # Renderiza ele
