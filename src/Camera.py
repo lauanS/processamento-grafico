@@ -2,7 +2,8 @@ import numpy as np
 from OpenGL.GL import *
 
 from ObjLoader import ObjLoader
-
+from ObjView import ObjView
+from Scene import Scene
 
 class Camera:
     def __init__(self, obj):
@@ -89,20 +90,33 @@ class Camera:
 
         return vertices
 
-
+# Testa a camera em um objeto "inclinado"
 def main():
     obj = ObjLoader()
-    file_name = 'src/modelos3D/small.obj'
+    file_name = 'src/modelos3D/ursinho.obj'
     obj.load_3D_obj(file_name)
     # Cria a cena
+    zoom = 0.3
+    scene = Scene()
+    scene.add_obj(obj)
+    # Define a escala e a inclinação
+    scene.set_scale([zoom, zoom, zoom])
+    scene.set_shear([1,1,0], 'x')
+    # Aplica as modificações
+    obj.vertices = scene.apply_scale()
+    scene.obj_list[0] = obj
+    obj.vertices = scene.apply_shear()
     # Criando uma câmera apontada para o objeto passado como parâmetro
     cam = Camera(obj)
     # Definindo posição da câmera, ponto a ser visualizado e o vetor de orientação respectivamente
-    cam.set_cam_info([5, -0.5, -2], [11.4173, -5.64501, 3.65125], [1, 1, 1])
+    cam.set_cam_info([10, 2, -6], [11, 5, 2], [1, 1, 1])
+    cam.set_perspective_info(2, 2, -4, -8.5)
+    cam.transform_visualization()
+    obj.vertices = cam.change_perspective()
 
-    # Mudando a visualização do objeto através da câmera
-    print(cam.transform_visualization())
-
+    # Renderizando com o OpenGL
+    view = ObjView(obj)
+    view.render()
 
 if __name__ == '__main__':
     main()

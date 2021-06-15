@@ -1,12 +1,12 @@
 import numpy as np
 from OpenGL.GL import *
 
+# Classe para carregar um objeto salvo
 class ObjLoader:
     def __init__(self):
         self.vertices = np.array([])
         self.faces = np.array([])
         self.file = ""
-        ##
 
     def load_3D_obj(self, file_name):
         try:
@@ -36,6 +36,7 @@ class ObjLoader:
     def show_3D_obj(self):
         return 1
     
+    # Renderiza a cena usando o OpenGL (debug)
     def render_scene(self):
         if len(self.faces) > 0:
             ##
@@ -53,12 +54,14 @@ class ObjLoader:
                     glVertex3fv(vertexDraw)
             glEnd()
     
+    # Imprime os vertices e as faces (debug)
     def print(self):
         print("Vertices:")
         print(self.vertices)
         print("Faces:")
         print(self.faces)
 
+# Testa se está carregando um objeto corretamente 
 def main():
     obj = ObjLoader()
     file_name = 'src/modelos3D/ursinho.obj'
