@@ -6,16 +6,19 @@ from Render import Render
 def main():
     # -----------------------Carregando um objeto ----------------------- #
     obj = ObjLoader()
+    obj2 = ObjLoader()
     # Objetos
     hand = 'coarseTri.hand.obj'
     urso = 'ursinho.obj'
     file_name = 'src/modelos3D/' + urso
     obj.load_3D_obj(file_name)
+    obj2.load_3D_obj('src/modelos3D/' + hand)
 
     # -----------------------Criando uma cena----------------------- #
     # Criando a cena e adicionando seu objeto nela
     scene = Scene()
     scene.add_obj(obj)
+    scene.add_obj(obj2)
     # Definindo os valores das transformações
     zoom = 6
     # Definindo um zoom no ursinho para visualizar melhor os detalhes
@@ -29,11 +32,15 @@ def main():
     scene.set_rotation(1.5708, 'y')
     # Aplicando cada transformação separadamente
     # e atualizando o objeto presente no mundo
-    obj.vertices = scene.apply_rotation()
-    scene.obj_list[0] = obj
-    obj.vertices = scene.apply_scale()
-    scene.obj_list[0] = obj
-    obj.vertices = scene.apply_translation()
+    # obj.vertices = scene.apply_rotation()
+    # scene.obj_list[0] = obj
+    # obj.vertices = scene.apply_scale()
+    # scene.obj_list[0] = obj
+    # obj.vertices = scene.apply_translation()
+
+    obj2.vertices = scene.apply_rotation()
+    scene.obj_list[0] = obj2
+    obj2.vertices = scene.apply_translation()
     
     # ----------------------- Camera ----------------------- #
     # Criando uma câmera apontada para o objeto passado como parâmetro
@@ -47,7 +54,7 @@ def main():
     cam.transform_visualization()
     obj.vertices = cam.change_perspective()
     # Renderizando o objeto
-    render = Render(obj)
+    render = Render(obj, obj2)
     render.render_matplot()
 
 if __name__ == '__main__':

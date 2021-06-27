@@ -8,13 +8,14 @@ from Camera import Camera
 
 # Classe que rasteriza a imagem gerada
 class Render:
-    def __init__(self, object={}):
+    def __init__(self, object={}, object2={}):
         # Objeto que será renderizado
         self.object = object
+        self.object2 = object2
         # Matriz da imagem (600 por 600 para a mão) com zoom em 0.8
         # Use 100x100 para o ursinho com zoom em 0.8
         # Use 1200x1200 no ursinho com zoom em 6
-        self.image = np.zeros((1200, 1200))
+        self.image = np.zeros((400, 400))
 
     # Atualiza o tamanho da matrix - shape:tupla -> (x,y)
     def set_img_shape(self, shape):
@@ -32,6 +33,16 @@ class Render:
             point_b = vertices[int(faces[i][1]) - 1]
             point_c = vertices[int(faces[i][2]) - 1]
             self.draw_triangle(point_a, point_b, point_c)
+     
+        vertices = self.object2.vertices
+        faces = self.object2.faces
+
+        # Para cada face, desenha seu triangulo
+        for i in range(len(faces)):
+            point_a = vertices[int(faces[i][0]) - 1]
+            point_b = vertices[int(faces[i][1]) - 1]
+            point_c = vertices[int(faces[i][2]) - 1]
+            self.draw_triangle(point_a, point_b, point_c)
         # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
@@ -40,6 +51,13 @@ class Render:
     def render_pixels(self):
         # Obtem as vertices do objeto (pontos)
         vertices = self.object.vertices
+
+        # Para cada ponto, desenha ele na matrix, usando seu x e y
+        for i in range(len(vertices)):
+            self.draw_pixel(vertices[i][0], vertices[i][1])
+
+
+        vertices = self.object2.vertices
 
         # Para cada ponto, desenha ele na matrix, usando seu x e y
         for i in range(len(vertices)):
@@ -71,6 +89,22 @@ class Render:
             triangle_y = [point_a[1] + norm, point_b[1] + norm, point_c[1] + norm, point_a[1] + norm]
 
             plt.fill(triangle_x, triangle_y, 'y')
+        # Plota a matrix como uma imagem
+
+        vertices = self.object2.vertices
+        faces = self.object2.faces
+
+        # Para cada ponto, desenha ele na matrix, usando seu x e y
+        for i in range(len(faces)):
+            point_a = vertices[int(faces[i][0]) - 1]
+            point_b = vertices[int(faces[i][1]) - 1]
+            point_c = vertices[int(faces[i][2]) - 1]
+
+            norm = int(len(self.image)/2)
+            triangle_x = [point_a[0] + norm, point_b[0] + norm, point_c[0] + norm, point_a[0] + norm]
+            triangle_y = [point_a[1] + norm, point_b[1] + norm, point_c[1] + norm, point_a[1] + norm]
+
+            plt.fill(triangle_x, triangle_y, 'r')
         # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
