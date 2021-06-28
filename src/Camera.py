@@ -6,11 +6,11 @@ from ObjView import ObjView
 from Scene import Scene
 
 class Camera:
-    def __init__(self, obj):
+    def __init__(self, obj_list):
         self.position = np.array([])
         self.look_at = np.array([])
         self.view_up = np.array([])
-        self.obj = obj
+        self.obj_list = obj_list
 
     # Define as informações principais da câmera
     def set_cam_info(self, position, look_at, view_up):
@@ -51,44 +51,47 @@ class Camera:
 
     # Faz a transformação do objeto para simular a visualização da câmera
     def transform_visualization(self):
-        # Calcula a matriz de projeção
-        M = self.generate_projection_matrix()
-        # Obtem os vertices do objeto
-        vertices = self.obj.vertices
-        # Adiciona 1 ao final de cada linha
-        rows = vertices.shape[0]
-        ones = np.ones((rows, 1))
-        vertices = np.append(vertices, ones, axis=1)
-        # Para cada linha, aplica a transformação
-        for i in range(len(vertices)):
-            vertices[i] = np.matmul(M, vertices[i])
-
-        return vertices[:, :-1, ]
+        for index in range(len(self.obj_list)):
+            obj = self.obj_list[index]
+            # Calcula a matriz de projeção
+            M = self.generate_projection_matrix()
+            # Obtem os vertices do objeto
+            vertices = obj.vertices
+            # Adiciona 1 ao final de cada linha
+            rows = vertices.shape[0]
+            ones = np.ones((rows, 1))
+            vertices = np.append(vertices, ones, axis=1)
+            # Para cada linha, aplica a transformação
+            for i in range(len(vertices)):
+                vertices[i] = np.matmul(M, vertices[i])
+            self.obj_list[index].vertices = vertices[:, :-1, ]
 
     # Muda a perspectiva do objeto
     def change_perspective(self):
-        # Calcula a matriz de projeção
-        M = np.matrix([[self.near / self.right, 0, 0, 0],
-                       [0, self.near / self.top, 0, 0],
-                       [0, 0, -((self.far + self.near) / (self.far - self.near)), -
-                        (2*(self.far * self.near) / (self.far - self.near))],
-                       [0, 0, -1, 0]])
-        # Converte o vetor de posição da câmera (Pe) em uma matriz 4x1
-        cam_position = np.append(self.position, 1).reshape(4, 1)
-        # Gera as coordenadas intermediárias (Pc) em um vetor
-        clipping_coordinates = np.squeeze(np.asarray((M * cam_position)))
-        # Gera as coordenadas canônicas (Pndc)
-        p_ndc = np.array([clipping_coordinates[0] / clipping_coordinates[3],
-                          clipping_coordinates[1] / clipping_coordinates[3],
-                          clipping_coordinates[2] / clipping_coordinates[3]])
+        for index in range(len(self.obj_list)):
+            obj = self.obj_list[index]
+            # Calcula a matriz de projeção
+            M = np.matrix([[self.near / self.right, 0, 0, 0],
+                        [0, self.near / self.top, 0, 0],
+                        [0, 0, -((self.far + self.near) / (self.far - self.near)), -
+                            (2*(self.far * self.near) / (self.far - self.near))],
+                        [0, 0, -1, 0]])
+            # Converte o vetor de posição da câmera (Pe) em uma matriz 4x1
+            cam_position = np.append(self.position, 1).reshape(4, 1)
+            # Gera as coordenadas intermediárias (Pc) em um vetor
+            clipping_coordinates = np.squeeze(np.asarray((M * cam_position)))
+            # Gera as coordenadas canônicas (Pndc)
+            p_ndc = np.array([clipping_coordinates[0] / clipping_coordinates[3],
+                            clipping_coordinates[1] / clipping_coordinates[3],
+                            clipping_coordinates[2] / clipping_coordinates[3]])
 
-        # Obtem os vertices do objeto
-        vertices = self.obj.vertices
+            # Obtem os vertices do objeto
+            vertices = obj.vertices
 
-        for i in range(len(vertices)):
-            vertices[i] = p_ndc * vertices[i]
+            for i in range(len(vertices)):
+                vertices[i] = p_ndc * vertices[i]
 
-        return vertices
+            self.obj_list[index].vertices = vertices
 
 # Testa a camera em um objeto "inclinado"
 def main():
@@ -98,24 +101,29 @@ def main():
     # Cria a cena
     zoom = 0.3
     scene = Scene()
+    # Define a escala e a inclinação do objeto
+    obj.set_scale([zoom, zoom, zoom])
+    obj.set_shear([1, 1, 0], 'x')
+
+    # Adiciona o objeto na cena
     scene.add_obj(obj)
-    # Define a escala e a inclinação
-    scene.set_scale([zoom, zoom, zoom])
-    scene.set_shear([1,1,0], 'x')
+
     # Aplica as modificações
-    obj.vertices = scene.apply_scale()
-    scene.obj_list[0] = obj
-    obj.vertices = scene.apply_shear()
+    scene.apply_scale()
+    # scene.apply_shear()
+
     # Criando uma câmera apontada para o objeto passado como parâmetro
-    cam = Camera(obj)
+    cam = Camera(scene.obj_list)
+
     # Definindo posição da câmera, ponto a ser visualizado e o vetor de orientação respectivamente
     cam.set_cam_info([10, 2, -6], [11, 5, 2], [1, 1, 1])
     cam.set_perspective_info(2, 2, -4, -8.5)
     cam.transform_visualization()
-    obj.vertices = cam.change_perspective()
+
+    cam.change_perspective()
 
     # Renderizando com o OpenGL
-    view = ObjView(obj)
+    view = ObjView(cam.obj_list[0])
     view.render()
 
 if __name__ == '__main__':
