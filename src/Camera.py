@@ -29,11 +29,10 @@ class Camera:
 
     # Calcula os vetores U, V e N
     def calculate_uvn(self):
-        self.n = (self.look_at - self.position) / \
-            abs(self.look_at - self.position)
+        self.n = (self.look_at - self.position) / abs(self.look_at - self.position)
         self.u = (self.view_up * self.n) / abs(self.view_up * self.n)
-        self.v = self.n * self.u
-
+        self.v = np.cross(self.n, self.u)
+        
     # Define as matrizes de translação e rotação da câmera e retorna a matriz de projeção
     def generate_projection_matrix(self):
         self.calculate_uvn()
