@@ -33,7 +33,7 @@ class Render:
                 point_a = vertices[int(faces[i][0]) - 1]
                 point_b = vertices[int(faces[i][1]) - 1]
                 point_c = vertices[int(faces[i][2]) - 1]
-                self.draw_triangle(point_a, point_b, point_c)
+                self.draw_filled_triangle(point_a, point_b, point_c)
 
         # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
@@ -41,19 +41,15 @@ class Render:
     
     # Função para renderixar apenas os pontos do objeto
     def render_pixels(self):
-        # Obtem as vertices do objeto (pontos)
-        vertices = self.object.vertices
+        for index in range(len(self.obj_list)):
+            obj = self.obj_list[index]
+            # Obtem as vertices do objeto (pontos)
+            vertices = obj.vertices
 
-        # Para cada ponto, desenha ele na matrix, usando seu x e y
-        for i in range(len(vertices)):
-            self.draw_pixel(vertices[i][0], vertices[i][1])
+            # Para cada ponto, desenha ele na matrix, usando seu x e y
+            for i in range(len(vertices)):
+                self.draw_pixel(vertices[i][0], vertices[i][1])
 
-
-        vertices = self.object2.vertices
-
-        # Para cada ponto, desenha ele na matrix, usando seu x e y
-        for i in range(len(vertices)):
-            self.draw_pixel(vertices[i][0], vertices[i][1])
         # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
@@ -135,6 +131,31 @@ class Render:
             
             d = d + 2 * dy
 
+    def draw_filled_triangle(self, point_a, point_b, point_c):
+        max_x = max(point_a[0], max(point_b[0], point_c[0]))
+        min_x = min(point_a[0], min(point_b[0], point_c[0]))
+        max_y = max(point_a[1], max(point_b[1], point_c[1]))
+        min_y = min(point_a[1], min(point_b[1], point_c[1]))
+
+        for x in range(int(min_x), int(max_x)):
+            for y in range(int(min_y), int(max_y)):
+                if self.inside_triangle(x, y, point_a, point_b, point_c):
+                    self.draw_pixel(x, y)
+
+    def inside_triangle(self, x, y, point_a, point_b, point_c):
+        def sign(point_a, point_b, point_c):
+            temp_a = (point_a[0] - point_c[0]) * (point_b[1] - point_c[1]) 
+            temp_b = (point_b[0] - point_c[0]) * (point_a[1] - point_c[1])
+            return temp_a - temp_b
+        d1 = sign([x, y], point_a, point_b);
+        d2 = sign([x, y], point_b, point_c);
+        d3 = sign([x, y], point_c, point_a);
+
+        has_neg = (d1 < 0) or (d2 < 0) or (d3 < 0);
+        has_pos = (d1 > 0) or (d2 > 0) or (d3 > 0);
+
+        return not(has_neg and has_pos)
+    
     # Pinta um pixel na imagem
     def draw_pixel(self, x, y):
         # print(f'X: {x}[{int(x)}]|Y: {y}[{int(y)}]')
@@ -172,8 +193,10 @@ def main():
     ursinho.set_rotation(1.5708, 'z')
 
     # --- Mão --- #
-    zoom = 0.9
+    zoom = 0.8
     hand.set_scale([zoom, zoom, zoom])
+    hand.set_rotation(1.5708, 'z')
+    hand.set_translation([50, 78, 1])
 
     # Criando a cena e adicionando seu objeto nela
     scene = Scene()
