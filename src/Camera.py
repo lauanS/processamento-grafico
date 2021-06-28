@@ -115,9 +115,9 @@ def main():
     cam = Camera(scene.obj_list)
 
     # Definindo posição da câmera, ponto a ser visualizado e o vetor de orientação respectivamente
-    cam.set_cam_info([10, 2, -6], [11, 5, 2], [1, 1, 1])
+    cam.set_cam_info([10, 20, -20], [0, 0, 0], [0, 1, 0])
     cam.set_perspective_info(2, 2, -4, -8.5)
-    cam.transform_visualization()
+    # cam.transform_visualization()
 
     cam.change_perspective()
 

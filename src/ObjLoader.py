@@ -12,7 +12,7 @@ class ObjLoader:
         self.angle = 0
         self.axis = "x"
         # translation
-        self.translation = np.array([0, 0, 0])
+        self.distance = np.array([0, 0, 0])
         
         self.shear = np.array([1, 1, 1])
         self.shear_axis = np.array('x')
