@@ -5,7 +5,7 @@ from matplotlib import pyplot as plt
 from ObjLoader import ObjLoader
 from Scene import Scene
 from Camera import Camera
-
+from Lighting import Lighting
 # Classe que rasteriza a imagem gerada
 class Render:
     def __init__(self, obj_list):
@@ -15,7 +15,7 @@ class Render:
         # Use 100x100 para o ursinho com zoom em 0.8
         # Use 1200x1200 no ursinho com zoom em 6
         self.image = np.zeros((1200, 1200))
-
+        self.light = Lighting()
     def set_img_shape(self, shape):
         """ Atualiza o tamanho da matrix - shape:tupla -> (x,y) """
         self.image = np.zeros(shape)
@@ -41,27 +41,21 @@ class Render:
     
     def render_light(self):
         """ Renderiza a img aplicando luz"""
-        # Obtem o ponto de origem da luz
-        light_position = False
-        for index in range(len(self.obj_list)):
-            obj = self.obj_list[index]
-            if obj.type == "light":
-                light = obj
         # Percorre todos os objetos
         for index in range(len(self.obj_list)):
             obj = self.obj_list[index]
-            if obj.type != "light":
-                # Obtem as vertices do objeto (pontos)
-                vertices = obj.vertices
-                faces = obj.faces
+            # Obtem as vertices do objeto (pontos)
+            vertices = obj.vertices
+            faces = obj.faces
 
-                # Para cada face, desenha seu triangulo
-                for i in range(len(faces)):
-                    point_a = vertices[int(faces[i][0]) - 1]
-                    point_b = vertices[int(faces[i][1]) - 1]
-                    point_c = vertices[int(faces[i][2]) - 1]
+            # Para cada face, desenha seu triangulo
+            for i in range(len(faces)):
+                point_a = vertices[int(faces[i][0]) - 1]
+                point_b = vertices[int(faces[i][1]) - 1]
+                point_c = vertices[int(faces[i][2]) - 1]
 
-                    self.draw_filled_triangle(point_a, point_b, point_c)
+                color = self.light.diffuse_reflection_flat(point_a, point_b, point_c, 0.8)
+                self.draw_filled_triangle(point_a, point_b, point_c, color)
 
         # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
@@ -153,7 +147,7 @@ class Render:
             
             d = d + 2 * dy
 
-    def draw_filled_triangle(self, point_a, point_b, point_c):
+    def draw_filled_triangle(self, point_a, point_b, point_c, color=1):
         """ Desenha um triângulo preenchido """
         max_x = max(point_a[0], max(point_b[0], point_c[0]))
         min_x = min(point_a[0], min(point_b[0], point_c[0]))
@@ -163,7 +157,7 @@ class Render:
         for x in range(int(min_x), int(max_x)):
             for y in range(int(min_y), int(max_y)):
                 if self.__inside_triangle(x, y, point_a, point_b, point_c):
-                    self.draw_pixel(x, y)
+                    self.draw_pixel(x, y, color)
 
     def __inside_triangle(self, x, y, point_a, point_b, point_c):
         """ Verifica se os pontos x e y passados estão dentro do triângulo """
@@ -250,7 +244,7 @@ def main():
     # ----------------------- Render ----------------------- #
     # Renderizando o objeto
     render = Render(cam.obj_list)
-    render.render()
+    render.render_light()
 
 
 
