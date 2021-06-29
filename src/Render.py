@@ -16,12 +16,12 @@ class Render:
         # Use 1200x1200 no ursinho com zoom em 6
         self.image = np.zeros((1200, 1200))
 
-    # Atualiza o tamanho da matrix - shape:tupla -> (x,y)
     def set_img_shape(self, shape):
+        """ Atualiza o tamanho da matrix - shape:tupla -> (x,y) """
         self.image = np.zeros(shape)
 
-    # Renderiza todas as arestas do objeto
     def render(self):
+        """ Renderiza todas as arestas do objeto"""
         for index in range(len(self.obj_list)):
             obj = self.obj_list[index]
             # Obtem as vertices do objeto (pontos)
@@ -39,8 +39,36 @@ class Render:
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
     
-    # Função para renderixar apenas os pontos do objeto
+    def render_light(self):
+        """ Renderiza a img aplicando luz"""
+        # Obtem o ponto de origem da luz
+        light_position = False
+        for index in range(len(self.obj_list)):
+            obj = self.obj_list[index]
+            if obj.type == "light":
+                light = obj
+        # Percorre todos os objetos
+        for index in range(len(self.obj_list)):
+            obj = self.obj_list[index]
+            if obj.type != "light":
+                # Obtem as vertices do objeto (pontos)
+                vertices = obj.vertices
+                faces = obj.faces
+
+                # Para cada face, desenha seu triangulo
+                for i in range(len(faces)):
+                    point_a = vertices[int(faces[i][0]) - 1]
+                    point_b = vertices[int(faces[i][1]) - 1]
+                    point_c = vertices[int(faces[i][2]) - 1]
+
+                    self.draw_filled_triangle(point_a, point_b, point_c)
+
+        # Plota a matrix como uma imagem
+        plt.imshow(self.image, interpolation='nearest')
+        plt.show()
+
     def render_pixels(self):
+        """ Função para renderixar apenas os pontos do objeto"""
         for index in range(len(self.obj_list)):
             obj = self.obj_list[index]
             # Obtem as vertices do objeto (pontos)
@@ -53,15 +81,15 @@ class Render:
         # Plota a matrix como uma imagem
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
-
-    # Função para desenhar um triângulo
+ 
     def draw_triangle(self, point_a, point_b, point_c):
+        """ Função para desenhar um triângulo """
         self.draw_line(point_a[0], point_a[1], point_b[0], point_b[1])
         self.draw_line(point_b[0], point_b[1], point_c[0], point_c[1])
         self.draw_line(point_c[0], point_c[1], point_a[0], point_a[1])
 
-    # Função para renderizar um objeto usando plot.fill do matplotlib
     def render_matplot(self):
+        """ Função para renderizar um objeto usando plot.fill do matplotlib """
         for index in range(len(self.obj_list)):
             obj = self.obj_list[index]
             # Obtem as vertices do objeto (pontos)
@@ -83,14 +111,8 @@ class Render:
         plt.imshow(self.image, interpolation='nearest')
         plt.show()
 
-    # Função interna para obter o sinal de um valor
-    def __signal(self, value):
-        if(value < 0):
-            return -1
-        return 1
-
-    # Desenha uma linha na imagem 
     def draw_line(self, x0, y0, x1, y1):
+        """ Desenha uma linha na imagem  """
         dx = abs(x1 - x0)
         dy = abs(y1 - y0)
 
@@ -132,6 +154,7 @@ class Render:
             d = d + 2 * dy
 
     def draw_filled_triangle(self, point_a, point_b, point_c):
+        """ Desenha um triângulo preenchido """
         max_x = max(point_a[0], max(point_b[0], point_c[0]))
         min_x = min(point_a[0], min(point_b[0], point_c[0]))
         max_y = max(point_a[1], max(point_b[1], point_c[1]))
@@ -139,10 +162,11 @@ class Render:
 
         for x in range(int(min_x), int(max_x)):
             for y in range(int(min_y), int(max_y)):
-                if self.inside_triangle(x, y, point_a, point_b, point_c):
+                if self.__inside_triangle(x, y, point_a, point_b, point_c):
                     self.draw_pixel(x, y)
 
-    def inside_triangle(self, x, y, point_a, point_b, point_c):
+    def __inside_triangle(self, x, y, point_a, point_b, point_c):
+        """ Verifica se os pontos x e y passados estão dentro do triângulo """
         def sign(point_a, point_b, point_c):
             temp_a = (point_a[0] - point_c[0]) * (point_b[1] - point_c[1]) 
             temp_b = (point_b[0] - point_c[0]) * (point_a[1] - point_c[1])
@@ -156,13 +180,17 @@ class Render:
 
         return not(has_neg and has_pos)
     
-    # Pinta um pixel na imagem
-    def draw_pixel(self, x, y):
+    def draw_pixel(self, x, y, color=1):
+        """ Pinta um pixel na imagem"""
         # print(f'X: {x}[{int(x)}]|Y: {y}[{int(y)}]')
         self.image[int(len(self.image)/2) - int(x)
-                   ][int(len(self.image)/2) - int(y)] = 1
+                   ][int(len(self.image)/2) - int(y)] = color
 
-
+    def __signal(self, value):
+        """ Função interna para obter o sinal de um valor"""
+        if(value < 0):
+            return -1
+        return 1
 # Demonstração usando nosso rasterizador
 def main():
     # -----------------------Carregando um objeto ----------------------- #
@@ -175,7 +203,7 @@ def main():
     hand = ObjLoader()
     ursinho = ObjLoader()
     
-    hand.load_3D_obj(base_path + hand_path)
+    # hand.load_3D_obj(base_path + hand_path)
     ursinho.load_3D_obj(base_path + ursinho_path)
 
     # -----------------------Criando uma cena----------------------- #
@@ -194,14 +222,14 @@ def main():
 
     # --- Mão --- #
     zoom = 0.8
-    hand.set_scale([zoom, zoom, zoom])
-    hand.set_rotation(1.5708, 'z')
-    hand.set_translation([50, 78, 1])
+    # hand.set_scale([zoom, zoom, zoom])
+    # hand.set_rotation(1.5708, 'z')
+    # hand.set_translation([50, 78, 1])
 
     # Criando a cena e adicionando seu objeto nela
     scene = Scene()
     scene.add_obj(ursinho)
-    scene.add_obj(hand)
+    # scene.add_obj(hand)
     # Aplicando cada transformação separadamente
     # e atualizando o objeto presente no mundo
     scene.apply_rotation()
