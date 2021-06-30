@@ -5,57 +5,64 @@ from Render import Render
 
 def main():
     # -----------------------Carregando um objeto ----------------------- #
-    obj = ObjLoader()
-    obj2 = ObjLoader()
-    # Objetos
-    hand = 'coarseTri.hand.obj'
-    urso = 'ursinho.obj'
-    file_name = 'src/modelos3D/' + urso
-    obj.load_3D_obj(file_name)
-    obj2.load_3D_obj('src/modelos3D/' + hand)
+    #--- Objetos ---#
+    # paths
+    hand_path = 'coarseTri.hand.obj'
+    ursinho_path = 'ursinho.obj'
+    base_path = 'src/modelos3D/'
+    # Carregando os objetos
+    hand = ObjLoader()
+    ursinho = ObjLoader()
+    
+    hand.load_3D_obj(base_path + hand_path)
+    ursinho.load_3D_obj(base_path + ursinho_path)
 
     # -----------------------Criando uma cena----------------------- #
-    # Criando a cena e adicionando seu objeto nela
-    scene = Scene()
-    scene.add_obj(obj)
-    scene.add_obj(obj2)
-    # Definindo os valores das transformações
+    # Definindo as transformações de cada objeto
+
+    # --- URSINHO --- #
     zoom = 6
     # Definindo um zoom no ursinho para visualizar melhor os detalhes
-    scene.set_scale([zoom, zoom, zoom])
+    ursinho.set_scale([zoom, zoom, zoom])
     # Posicionando o ursinho
-    # Perto da parede (borda a esquerda da imagem)
-    # E no chão (Borda inferior da imagem)
-    scene.set_translation([50, -80, 1])
+    # No ar (perto da borda superior)
+    ursinho.set_translation([-80, 0, 10])
     # Defindo uma inclinação de 90° (em radianos) no eixo y
-    # Para deixar o ursinho de castigo olhando para parede (borda a esquerda da img)
-    scene.set_rotation(1.5708, 'y')
+    # Para deixar o ursinho olhando para baixo
+    ursinho.set_rotation(1.5708, 'y')
+
+    # --- Mão --- #
+    zoom = 0.75
+    # Posicionando a mão que está arremesando o ursinho
+    hand.set_scale([zoom, zoom, zoom])
+    hand.set_rotation(1.5708, 'z')
+    hand.set_translation([80, 0, 1])
+
+    # Criando a cena e adicionando seu objeto nela
+    scene = Scene()
+    scene.add_obj(ursinho)
+    scene.add_obj(hand)
     # Aplicando cada transformação separadamente
     # e atualizando o objeto presente no mundo
-    # obj.vertices = scene.apply_rotation()
-    # scene.obj_list[0] = obj
-    # obj.vertices = scene.apply_scale()
-    # scene.obj_list[0] = obj
-    # obj.vertices = scene.apply_translation()
-
-    obj2.vertices = scene.apply_rotation()
-    scene.obj_list[0] = obj2
-    obj2.vertices = scene.apply_translation()
+    scene.apply_rotation()
+    scene.apply_scale()
+    scene.apply_translation()
     
     # ----------------------- Camera ----------------------- #
     # Criando uma câmera apontada para o objeto passado como parâmetro
-    cam = Camera(obj)
+    cam = Camera(scene.obj_list)
     # Definindo posição da câmera, ponto a ser visualizado e o vetor de orientação respectivamente
     # Position - lookAt - viewUp
     cam.set_cam_info([5, 5, 3], [6.0, 6.0, 5.0], [ 1, 1,  1])
     # Frustum
     cam.set_perspective_info(2, 2, -4, -8.5) 
     # Aplicando a transformação 
-    cam.transform_visualization()
-    obj.vertices = cam.change_perspective()
+    # cam.transform_visualization()
+    cam.change_perspective()
+    # ----------------------- Render ----------------------- #
     # Renderizando o objeto
-    render = Render(obj, obj2)
-    render.render_matplot()
-
+    render = Render(cam.obj_list)
+    render.render_light()
+    
 if __name__ == '__main__':
     main()

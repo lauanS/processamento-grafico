@@ -190,14 +190,14 @@ def main():
     # -----------------------Carregando um objeto ----------------------- #
     #--- Objetos ---#
     # paths
-    hand_path = 'coarseTri.hand.obj'
+    rocker_arm_path = 'coarseTri.rockerArm.obj'
     ursinho_path = 'ursinho.obj'
     base_path = 'src/modelos3D/'
     # Carregando os objetos
-    hand = ObjLoader()
+    rocker_arm = ObjLoader()
     ursinho = ObjLoader()
     
-    # hand.load_3D_obj(base_path + hand_path)
+    rocker_arm.load_3D_obj(base_path + rocker_arm_path)
     ursinho.load_3D_obj(base_path + ursinho_path)
 
     # -----------------------Criando uma cena----------------------- #
@@ -207,23 +207,23 @@ def main():
     zoom = 6
     # Definindo um zoom no ursinho para visualizar melhor os detalhes
     ursinho.set_scale([zoom, zoom, zoom])
-    # Deixando o ursinho "na pose" 
-    # Segurando na parede (borda a esquerda da imagem)
-    # E no chão (Borda inferior da imagem)
-    ursinho.set_translation([50, -78, 1])
-    # Defindo uma inclinação de 90° (em radianos) no eixo z para deixar o ursinho em pé
-    ursinho.set_rotation(1.5708, 'z')
+    # Posicionando o ursinho
+    # No ar (perto da borda superior)
+    ursinho.set_translation([-80, 0, 10])
+    # Defindo uma inclinação de 90° (em radianos) no eixo y
+    # Para deixar o ursinho olhando para baixo
+    ursinho.set_rotation(1.5708, 'y')
 
-    # --- Mão --- #
-    zoom = 0.8
-    # hand.set_scale([zoom, zoom, zoom])
-    # hand.set_rotation(1.5708, 'z')
-    # hand.set_translation([50, 78, 1])
+    # --- RockerArm --- #
+    zoom = 300
+    rocker_arm.set_scale([zoom, zoom, zoom])
+    rocker_arm.set_rotation(1.5708, 'y')
+    rocker_arm.set_translation([120, 0, 1])
 
     # Criando a cena e adicionando seu objeto nela
     scene = Scene()
     scene.add_obj(ursinho)
-    # scene.add_obj(hand)
+    scene.add_obj(rocker_arm)
     # Aplicando cada transformação separadamente
     # e atualizando o objeto presente no mundo
     scene.apply_rotation()
@@ -244,6 +244,7 @@ def main():
     # ----------------------- Render ----------------------- #
     # Renderizando o objeto
     render = Render(cam.obj_list)
+    render.set_img_shape((2000, 2000))
     render.render_light()
 
 

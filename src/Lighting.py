@@ -6,7 +6,7 @@ class Lighting:
     # Define a posição da câmera
     self.camera = np.array([])
     # Define a posição da fonte (objeto) de luz
-    self.position = np.array([10,10,10])
+    self.position = np.array([800, 10,10])
     # Intensidade
     self.intensity = 1
 
