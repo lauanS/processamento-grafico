@@ -84,65 +84,26 @@ Cada classe possuí uma função Main() própria, ao pedir para executar o arqui
 
 Arquivo principal, executa todo o pipeline gráfico.
 
-* Carrega um objeto
+* Carrega dois objeto
 * Cria uma cena
 * Aplica um zoom de 6x (escala com todos os atributos iguais)
-* Posiciona o objeto perto da "parede" e do "chão"
-* Rotaciona o objeto para ele ficar "olhando para parede"
+* Posiciona o ursinho perto do "teto" e a mão embaixo dele
+* Rotaciona o ursinho para ele ficar "olhando para baixo"
 * Cria uma câmera para o objeto
-* Renderiza ele utilizando o matplotlib para preencher os triângulos da imagem
+* Renderiza ele e tonaliza cada face dos objetos
 
-Resultado esperado: Ursinho no canto inferior esquerdo da imagem, "olhando" para esquerda (parede)
-
-### ObjView.py
-
-É uma classe auxiliar, usada durante o desenvolvimento das funções de leitura de objeto, definição do mundo e câmera, enquanto não tinhamos nosso próprio método de rasterização. Ela usa o OpenGL com o Pygame para exibir um objeto 3D. 
-
-* Carrega um objeto e renderiza ele com o OpenGL
-
-### ObjLoader.py
-
-Classe para carregar um arquivo .obj.
-
-Lê suas vertices e faces.
-
-* Carrega um objeto, exibe suas vertices e faces e renderiza ele com o OpenGL
-
-Resultado esperado: Ursinho centralizado na imagem
-
-### Scene.py
-
-Classe que define nosso mundo. Contém uma lista de objeto e métodos para aplicar transformações neles.
-
-* Carrega um objeto3D pequena (apenas um triâgulo)
-* Cria uma cena
-* Aplica zoom de 0.5
-* Movimenta, rotaciona, inclina e altera sua escala
-* Exibe as matrizes de vertices resultantes da aplicação de cada operação no objeto original
-
-### Camera.py
-
-Classe responsável por definir a câmera e a perspectiva da projeção
-
-* Carrega um objeto3D
-* Cria uma cena
-* Aplica um zoom (escala) e incline o objeto
-* Define a posição da câmera, ponto a ser visualizado e o vetor de orientação
-* Define as informações sobre a perspectiva (frustum)
-* Aplica a transformação na câmera
-* Altera a perspectiva
-* Renderiza o objeto usando o OpenGL 
-
-Resultado esperado: Um ursinho um pouco inclinado
+Resultado esperado: Ursinho no canto superir da imagem, "olhando" para baixo onde estára uma mão
 
 ### Render.py
 
 Classe responsável pela rasterização dos objetos 3D. Executa todo o pipeline gráfico.
 
-* Carrega um objeto
+* Carrega dois objeto
 * Cria uma cena
-* Aplica um zoom de 6x (Para obter uma boa visualização das arestas que formam cada triângulo (faces do objeto))
-* Posiciona o objeto muito perto da "parede" e do "chão"
-* Rotaciona o objeto para ele ficar "Com uma patinha na parede"
+* Aplica um zoom de 6x (escala com todos os atributos iguais)
+* Posiciona o ursinho perto do "teto" e a o rockerArm embaixo dele
+* Rotaciona o ursinho para ele ficar "olhando para baixo" e o rockerArm
 * Cria uma câmera para o objeto
-* Renderiza todas as vértices de cada face do objeto
+* Renderiza ele e tonaliza cada face dos objetos
+
+Resultado esperado: Ursinho no canto superir da imagem, "olhando" para baixo onde estára o rockerArm
